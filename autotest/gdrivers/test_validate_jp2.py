@@ -6,10 +6,10 @@
 # Project:  GDAL/OGR Test Suite
 # Purpose:  Test validate_jp2 script
 # Author:   Even Rouault <even dot rouault at spatialys dot com>
-# 
+#
 ###############################################################################
 # Copyright (c) 2015, European Union (European Environment Agency)
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
@@ -19,7 +19,7 @@
 #
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -102,8 +102,8 @@ def test_validate_jp2_2():
     expected_errors = ['ERROR[GeoJP2]: 2 GeoTIFF UUID box found',
      'ERROR[GeoJP2]: GeoTIFF should have width of 1 pixel, not 2',
      'ERROR[GeoJP2]: GeoTIFF should have height of 1 pixel, not 2',
-     'ERROR[GENERAL]: Inconsistant geotransform between GeoJP2 ((440720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0)) and GMLJP2 ((-440780.0, 60.0, 0.0, -3751260.0, 0.0, -60.0))',
-     'ERROR[GENERAL]: Inconsistant SRS between GeoJP2 (wkt=PROJCS["NAD27 / UTM zone 11N",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-117],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","26711"]], proj4=+proj=utm +zone=11 +datum=NAD27 +units=m +no_defs ) and GMLJP2 (wkt=PROJCS["WGS 84 / UTM zone 31N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",3],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","32631"]], proj4=+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs )',
+     'ERROR[GENERAL]: Inconsistent geotransform between GeoJP2 ((440720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0)) and GMLJP2 ((-440780.0, 60.0, 0.0, -3751260.0, 0.0, -60.0))',
+     'ERROR[GENERAL]: Inconsistent SRS between GeoJP2 (wkt=PROJCS["NAD27 / UTM zone 11N",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-117],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","26711"]], proj4=+proj=utm +zone=11 +datum=NAD27 +units=m +no_defs ) and GMLJP2 (wkt=PROJCS["WGS 84 / UTM zone 31N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",3],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","32631"]], proj4=+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs )',
      'ERROR[GENERAL]: ftyp.BR = "XXXX" instead of "jp2 "',
      'ERROR[GENERAL]: ftyp.MinV = "1" instead of 0',
      'ERROR[INSPIRE_TG]: "jpx " not found in compatibility list of ftyp, but GMLJP2 box present',
@@ -126,7 +126,7 @@ def test_validate_jp2_2():
      'ERROR[GMLJP2]: RectifiedGrid.limits.GridEnvelope.high[y] != Ysiz - 1',
      'ERROR[INSPIRE_TG, Conformance class A.8.6]: count(OrthoImageryCoverage.rangeType.field)(=1) != Csiz(=2) ',
      'ERROR[PROFILE_1, Conformance class A.8.14]: SPcod_xcb_minus_2 = 5, whereas max allowed for Profile 1 is 4']
-     
+
     if error_report.error_array != expected_errors:
         gdaltest.post_reason('did not get expected errors')
         import pprint
@@ -187,7 +187,7 @@ def test_validate_jp2_3():
  'ERROR[INSPIRE_TG]: Cannot find RectifiedGrid in OrthoImageryCoverage',
  'ERROR[INSPIRE_TG, Conformance class A.8.6]: count(OrthoImageryCoverage.rangeType.field)(=4) != Csiz(=5) ',
  'ERROR[PROFILE_1, Conformance class A.8.14]: Not enough decomposition levels = 0 (max_dim=162, 128 * 2**SPcod_NumDecompositions=128)']
-     
+
     if error_report.error_array != expected_errors:
         gdaltest.post_reason('did not get expected errors')
         import pprint
@@ -232,7 +232,7 @@ def test_validate_jp2_4():
  'ERROR[GENERAL]: No QCD marker found',
  'ERROR[GENERAL]: No SOT marker found',
  'ERROR[GENERAL]: No EOC marker found']
-     
+
     if error_report.error_array != expected_errors:
         gdaltest.post_reason('did not get expected errors')
         import pprint
@@ -277,7 +277,7 @@ def test_validate_jp2_5():
  'ERROR[GENERAL]: cmap.CMP[2] = 2 is invalid',
  'ERROR[GENERAL]: cmap.PCOL[2] = 0 is invalid since already used',
  'ERROR[GENERAL]: ihdr_nc(=2) != Csiz (=1)',
- 'ERROR[INSPIRE_TG, Conformance class A.8.8]: Inconsistant geotransform between OrthoImagery ((440720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0)) and GMLJP2/GeoJP2 ((40720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0))',
+ 'ERROR[INSPIRE_TG, Conformance class A.8.8]: Inconsistent geotransform between OrthoImagery ((440720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0)) and GMLJP2/GeoJP2 ((40720.0, 60.0, 0.0, 3751320.0, 0.0, -60.0))',
  'ERROR[INSPIRE_TG, Requirement 26, Conformance class A.8.16]: RGN marker found, which is not allowed' ]
 
     if error_report.error_array != expected_errors:

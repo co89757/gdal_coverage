@@ -62,14 +62,13 @@ class CPL_DLL OGREnvelope
     double      MinY;
     double      MaxY;
 
-/* See http://trac.osgeo.org/gdal/ticket/5299 for details on this pragma */
-#if ((__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && !defined(_MSC_VER)) 
+#ifdef HAVE_GCC_DIAGNOSTIC_PUSH
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #endif
     int  IsInit() const { return MinX != 0 || MinY != 0 || MaxX != 0 || MaxY != 0; }
 
-#if ((__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && !defined(_MSC_VER))
+#ifdef HAVE_GCC_DIAGNOSTIC_PUSH
 #pragma GCC diagnostic pop
 #endif
 
@@ -103,7 +102,7 @@ class CPL_DLL OGREnvelope
             MinY = MaxY = dfY;
         }
     }
-    
+
     void Intersect( OGREnvelope const& sOther ) {
         if(Intersects(sOther))
         {
@@ -130,7 +129,7 @@ class CPL_DLL OGREnvelope
             MaxY = 0;
         }
     }
- 
+
     int Intersects(OGREnvelope const& other) const
     {
         return MinX <= other.MaxX && MaxX >= other.MinX && 
@@ -175,7 +174,15 @@ class CPL_DLL OGREnvelope3D : public OGREnvelope
     double      MinZ;
     double      MaxZ;
 
+#ifdef HAVE_GCC_DIAGNOSTIC_PUSH
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+#endif
     int  IsInit() const { return MinX != 0 || MinY != 0 || MaxX != 0 || MaxY != 0 || MinZ != 0 || MaxZ != 0; }
+#ifdef HAVE_GCC_DIAGNOSTIC_PUSH
+#pragma GCC diagnostic pop
+#endif
+
     void Merge( OGREnvelope3D const& sOther ) {
         if( IsInit() )
         {
@@ -282,6 +289,21 @@ void CPL_DLL *OGRRealloc( void *, size_t );
 char CPL_DLL *OGRStrdup( const char * );
 void CPL_DLL OGRFree( void * );
 
+#ifdef STRICT_OGRERR_TYPE
+typedef enum
+{
+    OGRERR_NONE,
+    OGRERR_NOT_ENOUGH_DATA,
+    OGRERR_NOT_ENOUGH_MEMORY,
+    OGRERR_UNSUPPORTED_GEOMETRY_TYPE,
+    OGRERR_UNSUPPORTED_OPERATION,
+    OGRERR_CORRUPT_DATA,
+    OGRERR_FAILURE,
+    OGRERR_UNSUPPORTED_SRS,
+    OGRERR_INVALID_HANDLE,
+    OGRERR_NON_EXISTING_FEATURE
+} OGRErr;
+#else
 typedef int OGRErr;
 
 #define OGRERR_NONE                0
@@ -294,6 +316,8 @@ typedef int OGRErr;
 #define OGRERR_UNSUPPORTED_SRS     7
 #define OGRERR_INVALID_HANDLE      8
 #define OGRERR_NON_EXISTING_FEATURE 9   /* added in GDAL 2.0 */
+
+#endif
 
 typedef int     OGRBoolean;
 
@@ -330,6 +354,10 @@ typedef enum
                              *    ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
     wkbMultiCurve = 11,     /**< GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
     wkbMultiSurface = 12,   /**< GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
+    wkbPolyhedralSurface = 15,/**< a contiguous collection of polygons, which share common boundary segments,
+                               *   ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbTIN = 16,              /**< a PolyhedralSurface consisting only of Triangle patches
+                               *    ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
 
     wkbNone = 100,          /**< non-standard, for pure attribute records */
     wkbLinearRing = 101,    /**< non-standard, just for createGeometry() */
@@ -339,6 +367,38 @@ typedef enum
     wkbCurvePolygonZ = 1010,    /**< wkbCurvePolygon with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
     wkbMultiCurveZ = 1011,      /**< wkbMultiCurve with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
     wkbMultiSurfaceZ = 1012,    /**< wkbMultiSurface with Z component. ISO SQL/MM Part 3. GDAL &gt;= 2.0 */
+    wkbPolyhedralSurfaceZ = 1015,  /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbTINZ = 1016,                /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+
+    wkbPointM = 2001,              /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbLineStringM = 2002,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbPolygonM = 2003,            /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiPointM = 2004,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiLineStringM = 2005,    /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiPolygonM = 2006,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbGeometryCollectionM = 2007, /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCircularStringM = 2008,     /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCompoundCurveM = 2009,      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCurvePolygonM = 2010,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiCurveM = 2011,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiSurfaceM = 2012,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbPolyhedralSurfaceM = 2015,  /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbTINM = 2016,                /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+
+    wkbPointZM = 3001,              /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbLineStringZM = 3002,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbPolygonZM = 3003,            /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiPointZM = 3004,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiLineStringZM = 3005,    /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiPolygonZM = 3006,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbGeometryCollectionZM = 3007, /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCircularStringZM = 3008,     /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCompoundCurveZM = 3009,      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbCurvePolygonZM = 3010,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiCurveZM = 3011,         /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbMultiSurfaceZM = 3012,       /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbPolyhedralSurfaceZM = 3015,  /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+    wkbTINZM = 3016,                /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
 
     wkbPoint25D = 0x80000001, /**< 2.5D extension as per 99-402 */
     wkbLineString25D = 0x80000002, /**< 2.5D extension as per 99-402 */
@@ -353,12 +413,18 @@ typedef enum
 /* Outside of OGRwkbGeometryType since they are abstract types */
 #define wkbCurve            ((OGRwkbGeometryType)13)      /**< Curve (abstract type). SF-SQL 1.2 */
 #define wkbSurface          ((OGRwkbGeometryType)14)      /**< Surface (abstract type). SF-SQL 1.2 */
+#define wkbCurveZ           ((OGRwkbGeometryType)1013)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+#define wkbSurfaceZ         ((OGRwkbGeometryType)1014)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+#define wkbCurveM           ((OGRwkbGeometryType)2013)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+#define wkbSurfaceM         ((OGRwkbGeometryType)2014)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+#define wkbCurveZM          ((OGRwkbGeometryType)3013)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
+#define wkbSurfaceZM        ((OGRwkbGeometryType)3014)      /**< ISO SQL/MM Part 3. GDAL &gt;= 2.1 */
 
 /**
  * Output variants of WKB we support. 
  *
  * 99-402 was a short-lived extension to SFSQL 1.1 that used a high-bit flag
- * to indicate the presence of Z coordiantes in a WKB geometry.
+ * to indicate the presence of Z coordinates in a WKB geometry.
  *
  * SQL/MM Part 3 and SFSQL 1.2 use offsets of 1000 (Z), 2000 (M) and 3000 (ZM)
  * to indicate the present of higher dimensional coordinates in a WKB geometry.
@@ -387,12 +453,22 @@ typedef enum
 /** Return if the geometry type is a 3D geometry type
   * @since GDAL 2.0
   */
-#define wkbHasZ(x)     OGR_GT_HasZ(x)
+#define wkbHasZ(x)     (OGR_GT_HasZ(x) != 0)
 
 /** Return the 3D geometry type corresponding to the specified geometry type.
   * @since GDAL 2.0
   */
 #define wkbSetZ(x)     OGR_GT_SetZ(x)
+
+/** Return if the geometry type is a measured geometry type
+  * @since GDAL 2.1
+  */
+#define wkbHasM(x)     (OGR_GT_HasM(x) != 0)
+
+/** Return the measured geometry type corresponding to the specified geometry type.
+  * @since GDAL 2.1
+  */
+#define wkbSetM(x)     OGR_GT_SetM(x)
 
 #define ogrZMarker 0x21125711
 
@@ -404,8 +480,10 @@ OGRwkbGeometryType CPL_DLL OGRMergeGeometryTypesEx( OGRwkbGeometryType eMain,
                                                     int bAllowPromotingToCurves );
 OGRwkbGeometryType CPL_DLL OGR_GT_Flatten( OGRwkbGeometryType eType );
 OGRwkbGeometryType CPL_DLL OGR_GT_SetZ( OGRwkbGeometryType eType );
+OGRwkbGeometryType CPL_DLL OGR_GT_SetM( OGRwkbGeometryType eType );
 OGRwkbGeometryType CPL_DLL OGR_GT_SetModifier( OGRwkbGeometryType eType, int bSetZ, int bSetM );
 int                CPL_DLL OGR_GT_HasZ( OGRwkbGeometryType eType );
+int                CPL_DLL OGR_GT_HasM( OGRwkbGeometryType eType );
 int                CPL_DLL OGR_GT_IsSubClassOf( OGRwkbGeometryType eType,
                                                 OGRwkbGeometryType eSuperType );
 int                CPL_DLL OGR_GT_IsCurve( OGRwkbGeometryType );
@@ -426,7 +504,7 @@ typedef enum
 #endif
 
 #ifdef HACK_FOR_IBM_DB2_V72
-#  define DB2_V72_FIX_BYTE_ORDER(x) ((((x) & 0x31) == (x)) ? (OGRwkbByteOrder) ((x) & 0x1) : (x))
+#  define DB2_V72_FIX_BYTE_ORDER(x) ((((x) & 0x31) == (x)) ? ((x) & 0x1) : (x))
 #  define DB2_V72_UNFIX_BYTE_ORDER(x) ((unsigned char) (OGRGeometry::bGenerate_DB2_V72_BYTE_ORDER ? ((x) | 0x30) : (x)))
 #else
 #  define DB2_V72_FIX_BYTE_ORDER(x) (x)
@@ -497,7 +575,7 @@ typedef enum
  * Used by OGR_F_Validate().
  * @since GDAL 2.0
  */
-#define OGR_F_VAL_ALL            0xFFFFFFFF
+#define OGR_F_VAL_ALL            0x7FFFFFFF
 
 /************************************************************************/
 /*                  ogr_feature.h related definitions.                  */
@@ -544,7 +622,7 @@ typedef enum
                                                         OFSTBoolean = 1,
     /** Signed 16-bit integer. Only valid for OFTInteger and OFTIntegerList. */
                                                         OFSTInt16 = 2,
-    /** Single precision (32 bit) floatint point. Only valid for OFTReal and OFTRealList. */
+    /** Single precision (32 bit) floating point. Only valid for OFTReal and OFTRealList. */
                                                         OFSTFloat32 = 3,
                                                         OFSTMaxSubType = 3
 } OGRFieldSubType;
@@ -576,12 +654,12 @@ typedef union {
     GIntBig     Integer64;
     double      Real;
     char       *String;
-    
+
     struct {
         int     nCount;
         int     *paList;
     } IntegerList;
-    
+
     struct {
         int     nCount;
         GIntBig *paList;
@@ -591,7 +669,7 @@ typedef union {
         int     nCount;
         double  *paList;
     } RealList;
-    
+
     struct {
         int     nCount;
         char    **paList;
@@ -601,7 +679,7 @@ typedef union {
         int     nCount;
         GByte   *paData;
     } Binary;
-    
+
     struct {
         int     nMarker1;
         int     nMarker2;
@@ -645,6 +723,7 @@ int CPL_DLL OGRParseDate( const char *pszInput, OGRField *psOutput,
 #define OLCIgnoreFields        "IgnoreFields"
 #define OLCCreateGeomField     "CreateGeomField"
 #define OLCCurveGeometries     "CurveGeometries"
+#define OLCMeasuredGeometries  "MeasuredGeometries"
 
 #define ODsCCreateLayer        "CreateLayer"
 #define ODsCDeleteLayer        "DeleteLayer"
@@ -652,6 +731,7 @@ int CPL_DLL OGRParseDate( const char *pszInput, OGRField *psOutput,
 #define ODsCCurveGeometries    "CurveGeometries"
 #define ODsCTransactions       "Transactions"
 #define ODsCEmulatedTransactions "EmulatedTransactions"
+#define ODsCMeasuredGeometries "MeasuredGeometries"
 
 #define ODrCCreateDataSource   "CreateDataSource"
 #define ODrCDeleteDataSource   "DeleteDataSource"
@@ -710,7 +790,7 @@ typedef enum ogr_style_tool_param_pen_id
     OGRSTPenJoin        = 6,
     OGRSTPenPriority    = 7,
     OGRSTPenLast        = 8
-              
+
 } OGRSTPenParam;
 
 /**
@@ -727,7 +807,7 @@ typedef enum ogr_style_tool_param_brush_id
     OGRSTBrushDy        = 6,
     OGRSTBrushPriority  = 7,
     OGRSTBrushLast      = 8
-              
+
 } OGRSTBrushParam;
 
 
@@ -749,7 +829,7 @@ typedef enum ogr_style_tool_param_symbol_id
     OGRSTSymbolFontName = 10,
     OGRSTSymbolOColor   = 11,
     OGRSTSymbolLast     = 12
-              
+
 } OGRSTSymbolParam;
 
 /**
@@ -779,7 +859,7 @@ typedef enum ogr_style_tool_param_label_id
     OGRSTLabelHColor    = 19,
     OGRSTLabelOColor    = 20,
     OGRSTLabelLast      = 21
-              
+
 } OGRSTLabelParam;
 
 /* ------------------------------------------------------------------- */
@@ -798,12 +878,12 @@ const char CPL_DLL * CPL_STDCALL GDALVersionInfo( const char * );
 /** Return TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMinor.
 
     The purpose of this method is to ensure that calling code will run with the GDAL
-    version it is compiled for. It is primarly intented for external plugins.
+    version it is compiled for. It is primarily indented for external plugins.
 
     @param nVersionMajor Major version to be tested against
     @param nVersionMinor Minor version to be tested against
     @param pszCallingComponentName If not NULL, in case of version mismatch, the method
-                                   will issue a failure mentionning the name of
+                                   will issue a failure mentioning the name of
                                    the calling component.
   */
 int CPL_DLL CPL_STDCALL GDALCheckVersion( int nVersionMajor, int nVersionMinor,

@@ -45,7 +45,7 @@
 
 CPL_C_START
 
-void    GDALRegister_VRT(void);
+void GDALRegister_VRT();
 typedef CPLErr
 (*VRTImageReadFunc)( void *hCBData,
                      int nXOff, int nYOff, int nXSize, int nYSize,
@@ -102,4 +102,3 @@ CPLErr CPL_DLL CPL_STDCALL VRTAddFuncSource( VRTSourcedRasterBandH,
 CPL_C_END
 
 #endif /* GDAL_VRT_H_INCLUDED */
-

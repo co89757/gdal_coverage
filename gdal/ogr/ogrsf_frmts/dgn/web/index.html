@@ -48,7 +48,7 @@ Yes, fairly, though as distributed it may be necessary to tweak the
 cpl_port.h and cpl_config.h files for different platforms.  It was developed
 on Linux for a client deploying on MacOS, and Windows.<p>
 
-<li> <b>Does it require alot of memory?</b><p>
+<li> <b>Does it require a lot of memory?</b><p>
 
 Generally speaking no.  Only one element at a time is kept in memory.  If
 the file is "indexed" an additional 12 bytes per element is kept in memory
@@ -59,7 +59,7 @@ after a pre-scan, but this isn't required.<P>
 No, but there is a <a href="representation.html">document</a> that tries to
 indicate how to properly draw DGN elements given the structures returned by
 DGNLib.  The OGR layer re-interprets the drawing information into 
-<a href="http://www.gdal.org/ogr/ogr_feature_style.html">OGR Feature Style</a>
+<a href="http://www.gdal.org/ogr_feature_style.html">OGR Feature Style</a>
 format which is understood by some applications such as 
 <a href="http://mapserver.gis.umn.edu/">UMN MapServer</a>.
 <p>
@@ -223,6 +223,9 @@ OGR.<p>
 <li> Marius Kintel (<a href="http://www.sim.no">Systems In Motion</a>) for
 adding support for reading 3D cone (23), 3D surface (18) and 3D solid (19) 
 elements.<p>
+
+<li> Paulo Pires for adding 3D transformation support in DGNCreateCellHeaderElem().<p>
+
 </ul>
 
 </BODY>

@@ -27,46 +27,77 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef _CPL_WORKER_THREAD_POOL_H_INCLUDED_
-#define _CPL_WORKER_THREAD_POOL_H_INCLUDED_
+#ifndef CPL_WORKER_THREAD_POOL_H_INCLUDED_
+#define CPL_WORKER_THREAD_POOL_H_INCLUDED_
 
 #include "cpl_multiproc.h"
 #include "cpl_list.h"
 #include <vector>
 
-class WorkerThreadPool;
+/**
+ * \file cpl_worker_thread_pool.h
+ *
+ * Class to manage a pool of worker threads.
+ * @since GDAL 2.1
+ */
+
+class CPLWorkerThreadPool;
 
 typedef struct
 {
-    CPLThreadFunc      pfnInitFunc;
-    void              *pInitData;
-    WorkerThreadPool  *poTP;
-    CPLJoinableThread *hThread;
-} WorkerThread;
+    CPLThreadFunc  pfnFunc;
+    void          *pData;
+} CPLWorkerThreadJob;
 
-class CPL_DLL WorkerThreadPool
+typedef struct
 {
-        std::vector<WorkerThread> aWT;
+    CPLThreadFunc        pfnInitFunc;
+    void                *pInitData;
+    CPLWorkerThreadPool *poTP;
+    CPLJoinableThread   *hThread;
+    int                  bMarkedAsWaiting;
+    //CPLWorkerThreadJob  *psNextJob;
+
+    CPLMutex            *hMutex;
+    CPLCond             *hCond;
+} CPLWorkerThread;
+
+typedef enum
+{
+    CPLWTS_OK,
+    CPLWTS_STOP,
+    CPLWTS_ERROR
+} CPLWorkerThreadState;
+
+class CPL_DLL CPLWorkerThreadPool
+{
+        std::vector<CPLWorkerThread> aWT;
         CPLCond* hCond;
-        CPLCond* hCondWarnSubmitter;
-        CPLMutex* hCondMutex;
-        volatile int bStop;
+        CPLMutex* hMutex;
+        volatile CPLWorkerThreadState eState;
         CPLList* psJobQueue;
         volatile int nPendingJobs;
 
+        CPLList* psWaitingWorkerThreadsList;
+        int nWaitingWorkerThreads;
+
         static void WorkerThreadFunction(void* user_data);
 
-    public:
-        WorkerThreadPool();
-       ~WorkerThreadPool();
+        void DeclareJobFinished();
+        CPLWorkerThreadJob* GetNextJob(CPLWorkerThread* psWorkerThread);
 
-        int  Setup(int nThreads,
+    public:
+        CPLWorkerThreadPool();
+       ~CPLWorkerThreadPool();
+
+        bool Setup(int nThreads,
                    CPLThreadFunc pfnInitFunc,
                    void** pasInitData);
-        void SubmitJob(CPLThreadFunc pfnFunc, void* pData);
-        void WaitCompletion();
+        bool SubmitJob(CPLThreadFunc pfnFunc, void* pData);
+        bool SubmitJobs(CPLThreadFunc pfnFunc, const std::vector<void*>& apData);
+        void WaitCompletion(int nMaxRemainingJobs = 0);
 
         int GetThreadCount() const { return (int)aWT.size(); }
 };
 
-#endif // _CPL_WORKER_THREAD_POOL_H_INCLUDED_
+#endif // CPL_WORKER_THREAD_POOL_H_INCLUDED_
